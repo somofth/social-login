@@ -7,6 +7,7 @@ from fastapi.responses import HTMLResponse
 
 app = FastAPI()
 
+# CORS
 from fastapi.middleware.cors import CORSMiddleware
 origins = [
     "http://localhost:8000",
@@ -18,6 +19,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# WebSocket
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
@@ -28,8 +31,9 @@ async def websocket_endpoint(websocket: WebSocket):
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World"}
+    return {"Hello": "World"} # content-type: application/json
 
+# GET - DynamicPath & QS
 @app.get("/items/{item_id}")
 def read_item(item_id: int, q: Optional[str] = None):
     return {"item_id": item_id, "q": q}
@@ -73,7 +77,7 @@ def sendHTML3():
     f.close()
     return HTMLResponse(content=html_content, status_code=200)
 
-
+# POST - DynamicPath & QS
 @app.post("/items/{item_id}")
 def read_post_item(item_id: str, q: Optional[str]='아이템'):
     return {"id": item_id, "etc": q}
