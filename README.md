@@ -13,9 +13,11 @@
 - DynamicPath & QueryString
 - HTML String & File
 - WebSocket On & Send
+- Redirect
+- Cookie
 
-## Project (await ...)
-- KakaO Pay
-- KakaO Login
-- React SPA
-- Flutter
+## Project
+- KakaO Login : /kakao, /auth, /kakaoLogout
+- KakaO Pay : (await ...)
+- React SPA : (await ...)
+- Flutter : (await ...)

@@ -2,15 +2,18 @@
 # pip3 install uvicorn
 
 from typing import Optional
-from fastapi import FastAPI, Response, WebSocket
+from fastapi import FastAPI, Response, WebSocket, Request
+from fastapi.responses import RedirectResponse
 from fastapi.responses import HTMLResponse
+import requests
 
 app = FastAPI()
 
 # CORS
 from fastapi.middleware.cors import CORSMiddleware
 origins = [
-    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "http://localhost:8000"
 ]
 app.add_middleware(
     CORSMiddleware,
@@ -81,3 +84,31 @@ def sendHTML3():
 @app.post("/items/{item_id}")
 def read_post_item(item_id: str, q: Optional[str]='아이템'):
     return {"id": item_id, "etc": q}
+
+# KakaO Login
+@app.get('/kakao')
+def kakao():
+    REST_API_KEY = ""
+    REDIRECT_URI = "http://127.0.0.1:8000/auth"
+    url = f"https://kauth.kakao.com/oauth/authorize?client_id={REST_API_KEY}&response_type=code&redirect_uri={REDIRECT_URI}"
+    response = RedirectResponse(url)
+    return response
+
+@app.get('/auth')
+async def kakaoAuth(response: Response, code: Optional[str]="NONE"):
+    REST_API_KEY = ''
+    REDIRECT_URI = 'http://127.0.0.1:8000/auth'
+    _url = f'https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={REST_API_KEY}&code={code}&redirect_uri={REDIRECT_URI}'
+    _res = requests.post(_url)
+    _result = _res.json()
+    response.set_cookie(key="kakao", value=str(_result["access_token"]))
+    return {"code":_result}
+
+@app.get('/kakaoLogout')
+def kakaoLogout(request: Request, response: Response):
+    url = "https://kapi.kakao.com/v1/user/unlink"
+    KEY = request.cookies['kakao']
+    headers = dict(Authorization=f"Bearer {KEY}")
+    _res = requests.post(url,headers=headers)
+    response.set_cookie(key="kakao", value=None)
+    return {"logout": _res.json()}
