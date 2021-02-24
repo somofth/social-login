@@ -12,7 +12,7 @@ router = APIRouter()
 @router.get('/')
 def kakaopay():
     url = "https://kapi.kakao.com/v1/payment/ready"
-    APP_ADMIN_KEY = "6a5cb1ce35f9193039237b920162ec53"
+    APP_ADMIN_KEY = ""
     headers = {
         "Authorization" : f"KakaoAK {APP_ADMIN_KEY}", 
         "content-type" : "application/x-www-form-urlencoded;charset=utf-8"
@@ -30,7 +30,7 @@ def kakaopay():
 @router.get('/success')
 def kakaopay_success(request: Request, response: Response, pg_token: Optional[str]):
     url = "https://kapi.kakao.com/v1/payment/approve"
-    APP_ADMIN_KEY = "6a5cb1ce35f9193039237b920162ec53"
+    APP_ADMIN_KEY = ""
     headers = {
         "Authorization" : f"KakaoAK {APP_ADMIN_KEY}", 
         "content-type" : "application/x-www-form-urlencoded;charset=utf-8"
