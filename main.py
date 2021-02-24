@@ -6,8 +6,21 @@ from fastapi import FastAPI, Response, WebSocket, Request
 from fastapi.responses import RedirectResponse
 from fastapi.responses import HTMLResponse
 import requests
+from routers import items_router, kakao_pay_router
 
 app = FastAPI()
+app.include_router(
+    items_router.router,
+    prefix="/items",
+    tags=["items"],
+    responses={404: {"description": "Not ITEMS"}},
+)
+app.include_router(
+    kakao_pay_router.router,
+    prefix="/kakaopay",
+    tags=["kakao"],
+    responses={404: {"description": "Not KAKAO"}},
+)
 
 # CORS
 from fastapi.middleware.cors import CORSMiddleware
@@ -85,6 +98,13 @@ def sendHTML3():
 def read_post_item(item_id: str, q: Optional[str]='아이템'):
     return {"id": item_id, "etc": q}
 
+# 미들웨어 : 모든 Path 에서 동작
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    print("전처리")
+    response = await call_next(request)
+    return response
+
 # KakaO Login
 @app.get('/kakao')
 def kakao():
@@ -94,6 +114,7 @@ def kakao():
     response = RedirectResponse(url)
     return response
 
+# 토큰의 경우 클라이언트에서 처리 할 내용이지만 보다 쉬운 예제를 위해 웹 클라이언트로 강제하여 쿠키를 사용
 @app.get('/auth')
 async def kakaoAuth(response: Response, code: Optional[str]="NONE"):
     REST_API_KEY = ''
@@ -104,6 +125,7 @@ async def kakaoAuth(response: Response, code: Optional[str]="NONE"):
     response.set_cookie(key="kakao", value=str(_result["access_token"]))
     return {"code":_result}
 
+# 웹 클라이언트로 강제하여 쿠키를 사용했으므로 적용 과정에서는 사용하는 클라이언트에 따라 적용할 수 있도록 변경 필요
 @app.get('/kakaoLogout')
 def kakaoLogout(request: Request, response: Response):
     url = "https://kapi.kakao.com/v1/user/unlink"
