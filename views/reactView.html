@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React(CDN) + FastAPI</title>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script type="text/babel">
+
+        const {useState, useEffect} = React;
+
+        const Main = () => (
+            <div>
+                <div id="appBar" className="appBar" style={AppStyle.appBar}>AppBar</div>
+                <div id="body" className="body" style={AppStyle.body}>
+                    <form action="/kakaopayf" method="get">
+                        <input className="btn" type="submit" value="카카오 페이 결제(React/CDN)" style={AppStyle.btn} />
+                    </form>
+                </div>
+            </div>
+        );
+
+        const AppStyle = {
+            appBar: {
+                position: "fixed",
+                top: 0,
+                left: 0,
+                right: 0,
+                height: "10vh",
+                backgroundColor: "#6200EE",
+                padding: "2px",
+                color: "white",
+                textAlign: "center",
+                fontWeight: "bold",
+                lineHeight: "10vh",
+                fontSize: "1.5rem"
+            },
+            body: {
+                height: "100vh",
+                lineHeight: "100vh",
+                textAlign: "center",
+            },
+            btn: {
+                padding: '20px',
+                fontWeight: "bold",
+
+            }
+        }
+        
+        ReactDOM.render(<Main />, document.getElementById('root'));
+    </script>
+</body>
+</html>

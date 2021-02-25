@@ -9,7 +9,13 @@
     <h2>결제 완료</h2>
     <a href="http://flutterURL">이동</a>
     <script>
-        window.addEventListener('load', (_) => setTimeout(()=> james.postMessage('true'), 2000));
+        window.addEventListener('load', (_) => setTimeout(()=> {
+            try {
+                james.postMessage('true');
+            } catch (error) {
+                location.replace('/reactcdn');
+            }
+        }, 2000));
     </script>
 </body>
 </html>

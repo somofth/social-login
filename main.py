@@ -138,3 +138,11 @@ def kakaoLogout(request: Request, response: Response):
     _res = requests.post(url,headers=headers)
     response.set_cookie(key="kakao", value=None)
     return {"logout": _res.json()}
+
+# React(CDN) - KakaoPayf
+@app.get('/reactcdn')
+def reactCdn():
+    view =  open('/Users/doylekim/my/myFastApi/views/reactView.html',mode="r",encoding="utf-8")
+    html_content = view.read()
+    view.close()
+    return HTMLResponse(content=html_content, status_code=200)
