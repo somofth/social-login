@@ -5,9 +5,6 @@ import requests
 
 router = APIRouter()
 
-
-
-
 # 결제 요청
 @router.get('/')
 def kakaopay():
@@ -22,11 +19,10 @@ def kakaopay():
     _result = _res.json()
     _next_redirect_pc_url = _result["next_redirect_pc_url"]
     _redirectUrl = RedirectResponse(_next_redirect_pc_url,)
-    _redirectUrl.set_cookie(key="ttid",value= str(_result["tid"])) # 사용하는 플랫폼에서 저장 필요(클라이언트에서 진행할 내용이지만 쉬운 예시를 위해 웹클라이언트만 사용한다는 강제로 - 서버에서 처리)
+    _redirectUrl.set_cookie(key="ttid",value= str(_result["tid"]))
     return _redirectUrl
 
 # 결제 승인
-# * 별도의 router 를 통해 클라이언트에서 다시 요청(Req)을 보내서 처리해야 하지만 쉬운 예시를 위해 라우터에서 직접 처리
 @router.get('/success')
 def kakaopay_success(request: Request, response: Response, pg_token: Optional[str]):
     url = "https://kapi.kakao.com/v1/payment/approve"
