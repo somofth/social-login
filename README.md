@@ -21,5 +21,6 @@
 ## Project
 - KakaO Login : /kakao, /auth, /kakaoLogout
 - KakaO Pay : /kakaopay
+- React CDN : KakaO Pay - [Code](https://github.com/doyle-flutter/docFastApi/blob/main/views/reactView.html)
 - React SPA : (await ...)
 - Flutter : KakaO Pay - Android & IOS [Code](https://gist.github.com/doyle-flutter/15f5d3ed7bf21efc1ab66bca2d7de1c1) / KakaO Pay - Android & IOS & WEB [Code](https://gist.github.com/doyle-flutter/bf8b5c466b363fcad5ec03fa5aa80311)
