@@ -1,6 +1,10 @@
 # pip3 install fastapi
 # pip3 install uvicorn
 
+# run (1) : uvicorn main:app --reload
+# run (2) : python3 main.py
+
+import uvicorn
 from typing import Optional
 from fastapi import FastAPI, Response, WebSocket, Request
 from fastapi.responses import RedirectResponse
@@ -146,3 +150,12 @@ def reactCdn():
     html_content = view.read()
     view.close()
     return HTMLResponse(content=html_content, status_code=200)
+
+
+# Flutter App Version Check
+@app.get('/flutter/version')
+def flutterVersion():
+    return {"version": "1.0.1"}
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="192.168.0.3", port=8000)

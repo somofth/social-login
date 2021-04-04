@@ -19,6 +19,7 @@
 - Redirect & Redirect Cookie
 - Middleware
 - APIRouter
+- Flutter Version Check Router 👉 /flutter/version
 
 ## Project
 - KakaO Login : /kakao, /auth, /kakaoLogout
