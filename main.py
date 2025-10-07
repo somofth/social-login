@@ -3,7 +3,10 @@
 
 # run (1) : uvicorn main:app --reload
 # run (2) : python3 main.py
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 import uvicorn
 from typing import Optional
 from fastapi import FastAPI, Response, WebSocket, Request
@@ -57,7 +60,22 @@ async def websocket_endpoint(websocket: WebSocket):
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World"} # content-type: application/json
+    html_content = """
+    <html>
+        <head>
+            <title>Kakao Login Test</title>
+        </head>
+        <body>
+            <h1>Kakao Login Test</h1>
+            <a href="/kakao">
+                <img src="//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg" width="222" />
+            </a>
+            <br><br>
+            <a href="/kakaoLogout">Logout</a>
+        </body>
+    </html>
+    """
+    return HTMLResponse(content=html_content, status_code=200)
 
 # GET - DynamicPath & QS
 @app.get("/items/{item_id}")
@@ -118,7 +136,7 @@ async def add_process_time_header(request: Request, call_next):
 # KakaO Login
 @app.get('/kakao')
 def kakao():
-    REST_API_KEY = ""
+    REST_API_KEY = os.getenv("REST_API_KEY")
     REDIRECT_URI = "http://127.0.0.1:8000/auth"
     url = f"https://kauth.kakao.com/oauth/authorize?client_id={REST_API_KEY}&response_type=code&redirect_uri={REDIRECT_URI}"
     response = RedirectResponse(url)
@@ -126,7 +144,7 @@ def kakao():
 
 @app.get('/auth')
 async def kakaoAuth(response: Response, code: Optional[str]="NONE"):
-    REST_API_KEY = ''
+    REST_API_KEY = os.getenv("REST_API_KEY")
     REDIRECT_URI = 'http://127.0.0.1:8000/auth'
     _url = f'https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={REST_API_KEY}&code={code}&redirect_uri={REDIRECT_URI}'
     _res = requests.post(_url)
