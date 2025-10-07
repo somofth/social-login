@@ -149,35 +149,18 @@ async def kakaoAuth(response: Response, code: Optional[str]="NONE"):
     _url = f'https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={REST_API_KEY}&code={code}&redirect_uri={REDIRECT_URI}'
     _res = requests.post(_url)
     _result = _res.json()
-    response.set_cookie(key="kakao", value=str(_result["access_token"]))
+    response.set_cookie(key="kakao", value=str(_result["access_token"], path='/'))
+    print('카카오 로그인됨')
     return {"code":_result}
 
 @app.get('/kakaoLogout')
 def kakaoLogout(request: Request, response: Response):
-    print("--- Attempting Kakao Logout ---")
     url = "https://kapi.kakao.com/v1/user/unlink"
-    
-    key = request.cookies.get('kakao')
-    if not key:
-        print("Logout failed: 'kakao' cookie not found.")
-        response.set_cookie(key="kakao", value=None)
-        return {"message": "No active session to log out from."}
-
-    print(f"Found access token, sending request to Kakao...")
-    headers = dict(Authorization=f"Bearer {key}")
-    
-    try:
-        _res = requests.post(url, headers=headers)
-        print(f"Received response from Kakao. Status code: {_res.status_code}")
-        print(f"Response body: {_res.text}")
-
-        response.set_cookie(key="kakao", value=None)
-        return {"logout": _res.json()}
-
-    except Exception as e:
-        print(f"An exception occurred: {e}")
-        response.set_cookie(key="kakao", value=None)
-        return {"error": "An exception occurred during logout process."}
+    KEY = request.cookies['kakao']
+    headers = dict(Authorization=f"Bearer {KEY}")
+    _res = requests.post(url,headers=headers)
+    response.set_cookie(key="kakao", value=None)
+    return {"logout": _res.json()}
 
 # React(CDN) - KakaoPayf
 @app.get('/reactcdn')
