@@ -116,7 +116,7 @@ def sendHTML2():
 # HTML 파일 사용
 @app.get("/sendFile3")
 def sendHTML3():
-    f = open('/Users/doylekim/my/myFastApi/index.html', mode='r',  encoding='utf-8',)
+    f = open('./index.html', mode='r',  encoding='utf-8',)
     html_content = f.read()
     f.close()
     return HTMLResponse(content=html_content, status_code=200)
