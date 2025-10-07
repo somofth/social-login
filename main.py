@@ -149,7 +149,7 @@ async def kakaoAuth(response: Response, code: Optional[str]="NONE"):
     _url = f'https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={REST_API_KEY}&code={code}&redirect_uri={REDIRECT_URI}'
     _res = requests.post(_url)
     _result = _res.json()
-    response.set_cookie(key="kakao", value=str(_result["access_token"], path='/'))
+    response.set_cookie(key="kakao", value=str(_result["access_token"], path='/', samesite='lax', secure=True, httponly=True))
     print('카카오 로그인됨')
     return {"code":_result}
 
