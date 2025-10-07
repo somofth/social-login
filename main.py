@@ -71,11 +71,50 @@ def read_root():
                 <img src="//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg" width="222" />
             </a>
             <br><br>
+            <a href="/profile">View Profile</a>
+            <br><br>
             <a href="/kakaoLogout">Logout</a>
         </body>
     </html>
     """
     return HTMLResponse(content=html_content, status_code=200)
+
+
+@app.get("/profile")
+async def get_profile(request: Request):
+    # 1. Get token from cookie
+    token = request.cookies.get("kakao")
+    if not token:
+        return HTMLResponse(content="<h1>Please log in first</h1><a href='/'>Go to login</a>", status_code=401)
+
+    # 2. Call Kakao API
+    profile_url = "https://kapi.kakao.com/v2/user/me"
+    headers = {"Authorization": f"Bearer {token}"}
+    
+    try:
+        response = requests.get(profile_url, headers=headers)
+        response.raise_for_status() # Raise an exception for bad status codes (4xx or 5xx)
+        profile_data = response.json()
+        
+        # 3. Display user info
+        kakao_account = profile_data.get("kakao_account", {})
+        nickname = kakao_account.get("profile", {}).get("nickname", "N/A")
+        email = kakao_account.get("email", "N/A")
+
+        html_content = f"""
+        <html>
+            <body>
+                <h1>User Profile</h1>
+                <p>Nickname: {nickname}</p>
+                <p>Email: {email}</p>
+                <a href="/">Go back</a>
+            </body>
+        </html>
+        """
+        return HTMLResponse(content=html_content)
+
+    except requests.exceptions.RequestException as e:
+        return HTMLResponse(content=f"<h1>Error fetching profile</h1><p>{e}</p>", status_code=500)
 
 # GET - DynamicPath & QS
 @app.get("/items/{item_id}")
@@ -149,7 +188,7 @@ async def kakaoAuth(response: Response, code: Optional[str]="NONE"):
     _url = f'https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={REST_API_KEY}&code={code}&redirect_uri={REDIRECT_URI}'
     _res = requests.post(_url)
     _result = _res.json()
-    response.set_cookie(key="kakao", value=str(_result["access_token"]))
+    response.set_cookie(key="kakao", value=str(_result["access_token"]), path='/')
     print('카카오 로그인')
     return {"code":_result}
 
